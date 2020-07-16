@@ -15,7 +15,14 @@ class App extends Component {
 		this.setState({ result: '0' });
 	}
 	addToCurrent = (symbol) => {
-		this.setState({ current: this.state.current + symbol });
+		let operands = ['/', '-', '+', 'X'];
+		if(operands.indexOf(symbol) > -1) {
+			let {previous} = this.state;
+			previous.push(this.state.current + symbol);
+			this.setState({previous});
+		} else {
+			this.setState({ current: this.state.current + symbol});
+		}
 	}
 
 	render() {
@@ -40,6 +47,13 @@ class App extends Component {
 		];
 		return (
 			<div className="calc">
+				{this.state.previous.length > 0 ?
+					<div className="floaty-last">
+						{this.state.previous[this.state.previous.length - 1]}
+					</div>
+					:
+					null
+				}
 				<input
 					className="calc__result"
 					type="text"
@@ -47,7 +61,7 @@ class App extends Component {
 				</input>
 				<div className="box-wrap">
 					{buttons.map((btn, i) => {
-						return <Button key={i} symbol={btn.symbol} cols={btn.cols} action={(symbol) => btn.action(symbol)} />
+						return <Button key={btn.symbol} symbol={btn.symbol} cols={btn.cols} action={(symbol) => btn.action(symbol)} />
 					})}
 				</div>
 

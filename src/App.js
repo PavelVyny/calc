@@ -16,8 +16,8 @@ class App extends Component {
 		this.setState({ current: '0', previous: [], nextIsReset: false });
 	}
 	addToCurrent = (symbol) => {
-		let operands = ['/', '-', '+', '*'];
-		if (operands.indexOf(symbol) > -1) {
+		let operators = ['/', '-', '+', '*'];
+		if (operators.indexOf(symbol) > -1) {
 			let { previous } = this.state;
 			previous.push(this.state.current + symbol);
 			this.setState({ previous, nextIsReset: true });
@@ -30,10 +30,25 @@ class App extends Component {
 		}
 	}
 
-	calculate = (symbol) => {
-		let { current, previous, nextIsReset } = this.state;
+	calculate = () => {
+		let { current, previous } = this.state; // now current represents the right operand
+		let prevNumber = previous[previous.length - 1];
+		let exp = /^\d*\.?\d*/.exec(prevNumber);
+		let leftOperand = exp[0]; // extracting the left operand
+		let operator = prevNumber.replace(leftOperand, ''); //extracting the operator
+		console.log(operator);
 		if (previous.length > 0) {
 			current = eval(String(previous[previous.length - 1] + current)); 
+			let test = () => {
+				switch (operator) {
+					case '+': return leftOperand + current;
+					case '-': return leftOperand - current;
+					case '*': return leftOperand * current;
+					case '/': return leftOperand / current;
+				}
+			}
+			console.log(test)
+			
 			//eval() is an UNSAFE! quick solution
 			this.setState({ current, previous: [], nextIsReset: true });
 		}
@@ -69,12 +84,13 @@ class App extends Component {
 					null
 				}
 				<input
+					readOnly
 					className="calc__result"
 					type="text"
 					value={this.state.current}>
 				</input>
 				<div className="box-wrap">
-					{buttons.map((btn, i) => {
+					{buttons.map((btn) => {
 						return <Button key={btn.symbol} symbol={btn.symbol} cols={btn.cols} action={(symbol) => btn.action(symbol)} />
 					})}
 				</div>

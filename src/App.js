@@ -30,26 +30,33 @@ class App extends Component {
 		}
 	}
 
+	getResult (a, b, operator) {
+		switch (operator) {
+			case '+':
+				return a + b
+				break;
+			case '-':
+				return a - b
+				break;
+			case '*':
+				return a * b
+				break;
+			case '/':
+				return a / b
+				break;
+
+		}
+	}
+
 	calculate = () => {
-		let { current, previous } = this.state; // now current represents the right operand
+		let { current, previous } = this.state; // for now current represents the right operand
 		let prevNumber = previous[previous.length - 1];
 		let exp = /^\d*\.?\d*/.exec(prevNumber);
 		let leftOperand = exp[0]; // extracting the left operand
 		let operator = prevNumber.replace(leftOperand, ''); //extracting the operator
 		console.log(operator);
 		if (previous.length > 0) {
-			current = eval(String(previous[previous.length - 1] + current)); 
-			let test = () => {
-				switch (operator) {
-					case '+': return leftOperand + current;
-					case '-': return leftOperand - current;
-					case '*': return leftOperand * current;
-					case '/': return leftOperand / current;
-				}
-			}
-			console.log(test)
-			
-			//eval() is an UNSAFE! quick solution
+			current = this.getResult(leftOperand, current, operator);
 			this.setState({ current, previous: [], nextIsReset: true });
 		}
 	}
